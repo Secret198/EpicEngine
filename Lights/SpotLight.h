@@ -12,10 +12,18 @@ public:
 	float cutoffAngle;
 	float outerCutoffAngle;
 
-	SpotLight(int id): PointLight(id), direction(glm::vec3(0.0, -1.0, 0.0)), cutoffAngle(40.0f), outerCutoffAngle(45.0f){}
+	SpotLight(int id)
+		: PointLight(id), 
+		direction(glm::vec3(0.0, -1.0, 0.0)), 
+		cutoffAngle(40.0f), 
+		outerCutoffAngle(45.0f){}
 	SpotLight(int id, glm::vec3 position, glm::vec3 direction, float cutoffAngle, float outerCutoffAngle, float constant, float linear, float quadratic, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
-		:PointLight(id, position, constant, linear, quadratic, ambient, diffuse, specular), direction(direction), cutoffAngle(cutoffAngle), outerCutoffAngle(outerCutoffAngle){}
+		:PointLight(id, position, constant, linear, quadratic, ambient, diffuse, specular), 
+		direction(direction), 
+		cutoffAngle(cutoffAngle), 
+		outerCutoffAngle(outerCutoffAngle){}
 
+protected:
 	void sendToShader(Shader& shader) override{
 		char result[50];
 

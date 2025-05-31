@@ -8,7 +8,7 @@ using namespace std;
 int w_width = 1280;
 int w_height = 720;
 
-Camera camera(glm::vec3(0.0f, 0.0f, -0.9f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 InputHandler inpHandler(&camera);
 
 
@@ -42,7 +42,7 @@ int main()
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
-
+	Shader lightIconShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl");
 
 	//Test code
 	Shader testShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
@@ -52,8 +52,7 @@ int main()
 	testShader.set1b("textureMaps.hasDiffuseMap", false);
 	testShader.set1b("textureMaps.hasSpecularTexture", false);
 
-	PointLight testLight(0, glm::vec3(0.0, 0.5, 0.0), 1.0f, 0.7f, 1.8f, glm::vec3(1.0), glm::vec3(1.0), glm::vec3(1.0));
-	testLight.sendToShader(testShader);
+	PointLight testLight(0, glm::vec3(0.0, 0.5, 2.0), 1.0f, 0.7f, 1.8f, glm::vec3(1.0), glm::vec3(1.0), glm::vec3(1.0));
 	testShader.set1i("pointLightsNum", 1);
 	testShader.set1i("spotLightsNum", 0);
 
@@ -95,7 +94,13 @@ int main()
 		testShader.setMatrix4fv("view", view);
 		testShader.setMatrix4fv("projection", projection);
 
+		lightIconShader.use();
+		lightIconShader.setMatrix4fv("view", view);
+		lightIconShader.setMatrix4fv("projection", projection);
+
 		testObj.Draw(testShader, false, GL_TRIANGLES);
+
+		testLight.Draw(testShader, lightIconShader);
 
 		inpHandler.execute_key_action(deltaTime, window);
 

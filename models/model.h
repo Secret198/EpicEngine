@@ -32,6 +32,7 @@ public:
 	}
 
 	void Draw(Shader& shader, bool customTexture, GLenum drawMode) {
+		setTransforms(shader);
 		for (int i = 0; i < meshes.size(); i++)
 		{
 			if (!customTexture) {
@@ -41,15 +42,14 @@ public:
 				meshes[i].Draw(shader, textureType, textureId, drawMode);
 			}
 		}
-		setTransforms(shader);
 	}
 
 	void Draw(Shader& shader, GLenum type, unsigned int texId, GLenum drawMode) {
+		setTransforms(shader);
 		for (int i = 0; i < meshes.size(); i++)
 		{
 			meshes[i].Draw(shader, type, texId, drawMode);
 		}
-		setTransforms(shader);
 	}
 
 	void loadCubeMap(std::vector<std::string> faces) {
@@ -259,6 +259,7 @@ private:
 	}
 
 	void setTransforms(Shader &shader) {
+		shader.use();
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, position);
 
