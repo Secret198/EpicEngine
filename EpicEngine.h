@@ -14,6 +14,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include "imGuiHandler.h"
+#include "Lights/PointLight.h"
+#include "Lights/DirectionalLight.h"
+#include "Lights/SpotLight.h"
 
 void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mousePosCallback(GLFWwindow* window, double xpos, double ypos);

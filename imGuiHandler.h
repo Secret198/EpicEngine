@@ -28,6 +28,9 @@ public:
 		if (showWindow) {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			ImGui::ShowDemoWindow();
+			ImGui::Begin("Editor window");
+
+			ImGui::End();
 		}
 		else {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

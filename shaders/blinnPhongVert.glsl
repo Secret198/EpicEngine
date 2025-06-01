@@ -9,8 +9,11 @@ out vec3 fragPos;
 out vec2 texCoord;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+layout(std140) uniform ViewProjMatrix
+{
+    mat4 view;
+    mat4 projection;
+};
 
 void main()
 {

@@ -1,2 +1,23 @@
 - Handle file paths
-- Use uniform buffer objects for lights and matrices
+- Use uniform buffer objects for lights
+
+Imgui ui:
+	- Procedural texture stuff idk
+	-Property tree
+	- Lights
+		- ambient (color)
+		- diffuse (color)
+		- specular (color)
+		- linear (float)
+		- constant (float)
+		- quadratic (float)
+		- position (vec3 float)
+		
+		- direction (vec3 float)
+		- cutoffangle (float)		
+		- outercutoffangle (float)
+	- Objects
+		- position (vec3)
+		- rotationAxis (vec3)
+		- rotationAngle (float)
+		- scale (vec3)

@@ -10,6 +10,7 @@
 class Shader{
     public:
         unsigned int ID;
+        unsigned int viewProjBlockIndex;
         Shader(const char* vertexPath, const char* fragmentPath){
             std::string vertexCode;
             std::string fragmentCode;
@@ -56,7 +57,7 @@ class Shader{
 
             glDeleteShader(vShader);
             glDeleteShader(fShader);
-            
+            viewProjBlockIndex = glGetUniformBlockIndex(ID, "ViewProjMatrix");
         }
 
         void use(){

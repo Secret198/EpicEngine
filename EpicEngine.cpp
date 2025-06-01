@@ -1,7 +1,5 @@
 ﻿#include "EpicEngine.h"
-#include "Lights/PointLight.h"
-#include "Lights/DirectionalLight.h"
-#include "Lights/SpotLight.h"
+
 
 using namespace std;
 
@@ -61,6 +59,24 @@ int main()
 	testShader.use();
 	testShader.setMatrix4fv("model", model);*/
 
+	glm::mat4 projection = glm::perspective(camera.Zoom, (float)w_width / (float)w_height, 0.1f, 100.0f);
+
+	//Bind view projection uniform buffers to binding point 0
+	glUniformBlockBinding(testShader.ID, testShader.viewProjBlockIndex, 0);
+	glUniformBlockBinding(lightIconShader.ID, lightIconShader.viewProjBlockIndex, 0);
+
+	//Create view projection uniform buffer and set projection matrix
+	uint32_t viewProjectionUBO;
+	glGenBuffers(1, &viewProjectionUBO);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, viewProjectionUBO);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0, viewProjectionUBO);
+
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projection));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
 	//Set callbacks
 	glfwSetKeyCallback(window, keyboardCallback);
 	glfwSetCursorPosCallback(window, mousePosCallback);
@@ -88,15 +104,12 @@ int main()
 		testShader.use();
 
 		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 projection = glm::perspective(camera.Zoom, (float)w_width / (float)w_height, 0.1f, 100.0f);
 		
-		//test code
-		testShader.setMatrix4fv("view", view);
-		testShader.setMatrix4fv("projection", projection);
+		glBindBuffer(GL_UNIFORM_BUFFER, viewProjectionUBO);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		lightIconShader.use();
-		lightIconShader.setMatrix4fv("view", view);
-		lightIconShader.setMatrix4fv("projection", projection);
+		//test code
 
 		testObj.Draw(testShader, false, GL_TRIANGLES);
 
