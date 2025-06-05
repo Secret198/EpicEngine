@@ -20,15 +20,22 @@ public:
 	float rotationAngle;
 	glm::vec3 scale;
 
+	glm::vec3 matAmbient;
+	glm::vec3 matDiffuse;
+	glm::vec3 matSpecular;
+	float matShining;
+
 	GLenum textureType;
 	unsigned int textureId;
 
-	Model(std::string const path) {
+	Model(std::string const path) : rotationAngle(0.0f), matShining(64.0f) {
 		loadModel(path);
 		position = glm::vec3(1.0f);
 		rotationAxis = glm::vec3(1.0f);
-		rotationAngle = 0.0f;
 		scale = glm::vec3(1.0f);
+		matAmbient = glm::vec3(1.0f);
+		matDiffuse = glm::vec3(1.0f);
+		matSpecular = glm::vec3(1.0f);
 	}
 
 	void Draw(Shader& shader, bool customTexture, GLenum drawMode) {
@@ -268,5 +275,30 @@ private:
 		model = glm::scale(model, scale);
 
 		shader.setMatrix4fv("model", model);
+
+		shader.set3fv("material.ambient", matAmbient);
+		shader.set3fv("material.diffuse", matDiffuse);
+		shader.set3fv("material.specular", matSpecular);
+		shader.set1f("material.shining", matShining);
+
+		bool hasDiffuse = false;
+		bool hasSpecular = false;
+		if (textures_loaded.size() == 0) {
+			shader.set1b("textureMaps.hasDiffuseMap", false);
+			shader.set1b("textureMaps.hasSpecularTexture", false);
+		}
+		else {
+			for (auto i : textures_loaded) {
+				if (i.type == "texture_diffuse") {
+					hasDiffuse = true;
+				}
+				if (i.type == "texture_specular") {
+					hasSpecular = true;
+				}
+			}
+			shader.set1b("textureMaps.hasDiffuseMap", hasDiffuse);
+			shader.set1b("textureMaps.hasSpecularTexture", hasSpecular);
+
+		}
 	}
 };

@@ -47,9 +47,9 @@ public:
 	PointLight(int id) 
 		: id(id), 
 		position(glm::vec3(0.0)), 
-		constant(0.1),
-		linear(0.1),
-		quadratic(0.1),
+		constant(1.0),
+		linear(0.7),
+		quadratic(1.8),
 		lightIcon("E:/projects/EpicEngine/models/LightCube/LightCube.obj"){}
 
 	PointLight(int id, glm::vec3 position, float constant, float linear, float quadratic, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)

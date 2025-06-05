@@ -47,12 +47,21 @@ int main()
 	testShader.use();
 
 	Model testObj("E:/projects/EpicEngine/models/cube/cube.obj");
-	testShader.set1b("textureMaps.hasDiffuseMap", false);
-	testShader.set1b("textureMaps.hasSpecularTexture", false);
+	testObj.position.y = 2.0;
 
-	PointLight testLight(0, glm::vec3(0.0, 0.5, 2.0), 1.0f, 0.7f, 1.8f, glm::vec3(1.0), glm::vec3(1.0), glm::vec3(1.0));
+	Model plane("E:/projects/EpicEngine/models/plane/plane.obj");
+	plane.scale = glm::vec3(5.0);
+	plane.position.y = -1.0;
+
+	Model monkey("E:/projects/EpicEngine/models/monkey/monkey.obj");
+	monkey.position.x = -1.5;
+
+	PointLight testLight(0);
 	testShader.set1i("pointLightsNum", 1);
 	testShader.set1i("spotLightsNum", 0);
+	testLight.position.z = 2.5;
+	testLight.position.y = 0.2;
+
 
 	/*glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.5f));
@@ -112,6 +121,10 @@ int main()
 		//test code
 
 		testObj.Draw(testShader, false, GL_TRIANGLES);
+
+		plane.Draw(testShader, false, GL_TRIANGLES);
+
+		monkey.Draw(testShader, false, GL_TRIANGLES);
 
 		testLight.Draw(testShader, lightIconShader);
 

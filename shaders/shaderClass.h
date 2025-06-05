@@ -62,11 +62,6 @@ class Shader{
 
         void use(){
             glUseProgram(ID);
-
-            glUniform3fv(glGetUniformLocation(ID, "material.ambient"), 1, glm::value_ptr(glm::vec3(1.0)));
-            glUniform3fv(glGetUniformLocation(ID, "material.diffuse"), 1, glm::value_ptr(glm::vec3(1.0)));
-            glUniform3fv(glGetUniformLocation(ID, "material.specular"), 1, glm::value_ptr(glm::vec3(1.0)));
-            glUniform1f(glGetUniformLocation(ID, "material.shining"), 64.0);
         }
 
         void set1f(const char* name, float value) {

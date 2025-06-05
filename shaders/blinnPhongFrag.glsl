@@ -181,7 +181,7 @@ vec3 calcSpotLight(SpotLight light, vec3 viewDir)
     float epsilon = light.cutoffAngle - light.outerCutoffAngle;
     float intensity = clamp((theta - light.outerCutoffAngle) / epsilon, 0.0, 1.0);
 
-    ambient *= attenuation * intensity;
+    ambient *= attenuation;
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;
 

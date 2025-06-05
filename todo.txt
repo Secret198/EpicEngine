@@ -1,5 +1,7 @@
 - Handle file paths
 - Use uniform buffer objects for lights
+- Lighting glitches
+- Spotlight problem
 
 Imgui ui:
 	- Procedural texture stuff idk
