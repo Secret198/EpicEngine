@@ -55,6 +55,7 @@ int main()
 
 	Model monkey("E:/projects/EpicEngine/models/monkey/monkey.obj");
 	monkey.position.x = -1.5;
+	monkey.matDiffuse = glm::vec3(1.0, 0.2, 0.1);
 
 	PointLight testLight(0);
 	testShader.set1i("pointLightsNum", 1);
