@@ -9,6 +9,8 @@ int w_height = 720;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 InputHandler inpHandler(&camera);
 
+int pointLightNum = 0;
+int spotLightNum = 0;
 
 int main()
 {
@@ -42,6 +44,8 @@ int main()
 
 	Shader lightIconShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl");
 
+	vector<PointLight*> lights;
+
 	//Test code
 	Shader testShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
 	testShader.use();
@@ -57,11 +61,12 @@ int main()
 	monkey.position.x = -1.5;
 	monkey.matDiffuse = glm::vec3(1.0, 0.2, 0.1);
 
-	PointLight testLight(0);
-	testShader.set1i("pointLightsNum", 1);
-	testShader.set1i("spotLightsNum", 0);
+	PointLight testLight(0, pointLightNum, lights, glm::vec3(0.0f, 2.5f, 0.2f), 10.0f, 10.0f, 10.0f, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(0.0));
 	testLight.position.z = 2.5;
 	testLight.position.y = 0.2;
+
+
+	DirectionalLight testDirLight(glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f));
 
 
 	/*glm::mat4 model = glm::mat4(1.0f);
@@ -129,7 +134,9 @@ int main()
 
 		testLight.Draw(testShader, lightIconShader);
 
-		inpHandler.execute_key_action(deltaTime, window);
+		testDirLight.sendToShader(testShader);
+
+		inpHandler.execute_key_action(deltaTime, window, lights, pointLightNum + spotLightNum, testDirLight);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

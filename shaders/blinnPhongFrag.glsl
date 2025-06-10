@@ -66,8 +66,8 @@ uniform PointLight pointLights[maxLights];
 uniform SpotLight spotLights[maxLights];
 uniform DirectionalLight directionalLight;
 
-uniform int pointLightsNum;
-uniform int spotLightsNum;
+uniform int pointLightsNum = 0;
+uniform int spotLightsNum = 0;
 
 uniform Material material;
 uniform HasTextureMaps textureMaps;

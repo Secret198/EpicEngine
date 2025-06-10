@@ -10,7 +10,9 @@ public:
 	glm::vec3 direction;
 
 	DirectionalLight() 
-		: direction(glm::vec3(0.0, -1.0, 0.0)){}
+		: direction(glm::vec3(0.0, -1.0, 0.0)),
+		Light()
+	{}
 	DirectionalLight(glm::vec3 direction, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec) 
 		: Light(amb, diff, spec), 
 		direction(direction){}

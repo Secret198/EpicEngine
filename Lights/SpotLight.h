@@ -12,13 +12,13 @@ public:
 	float cutoffAngle;
 	float outerCutoffAngle;
 
-	SpotLight(int id)
-		: PointLight(id), 
+	SpotLight(int id, int &lightNum, std::vector<PointLight*> &container)
+		: PointLight(id, lightNum, container),
 		direction(glm::vec3(0.0, -1.0, 0.0)), 
 		cutoffAngle(40.0f), 
 		outerCutoffAngle(45.0f){}
-	SpotLight(int id, glm::vec3 position, glm::vec3 direction, float cutoffAngle, float outerCutoffAngle, float constant, float linear, float quadratic, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
-		:PointLight(id, position, constant, linear, quadratic, ambient, diffuse, specular), 
+	SpotLight(int id, int &lightNum, std::vector<PointLight*>& container, glm::vec3 position, glm::vec3 direction, float cutoffAngle, float outerCutoffAngle, float constant, float linear, float quadratic, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+		:PointLight(id, lightNum, container, position, constant, linear, quadratic, ambient, diffuse, specular),
 		direction(direction), 
 		cutoffAngle(cutoffAngle), 
 		outerCutoffAngle(outerCutoffAngle){}
@@ -58,6 +58,9 @@ protected:
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].outerCutoffAngle");
 		shader.set1f(result, outerCutoffAngle);
+
+		shader.set1i("spotLightsNum", lightNum);
+
 	}
 
 };

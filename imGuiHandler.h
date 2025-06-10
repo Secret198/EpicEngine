@@ -4,6 +4,8 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include "Lights/PointLight.h"
+#include "Lights/DirectionalLight.h"
 
 class ImguiHandler {
 public:
@@ -24,12 +26,13 @@ public:
 		ImGui::NewFrame();
 	}
 
-	static void showWindow(bool showWindow, GLFWwindow* window) {
+	static void showWindow(bool showWindow, GLFWwindow* window, PointLight* lights[256], int lightNum, DirectionalLight& dirLight) {
 		if (showWindow) {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			ImGui::ShowDemoWindow();
-			ImGui::Begin("Editor window");
-
+			ImGui::Begin("Light window");
+			for (uint16_t i = 0; i < lightNum; i++) {
+				lights[i]->ImGuiSection();
+			}
 			ImGui::End();
 		}
 		else {

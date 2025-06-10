@@ -1,7 +1,9 @@
 - Handle file paths
 - Use uniform buffer objects for lights
 - Lighting glitches
-- Spotlight problem
+	- Weird streak coming from point light
+- Directional light doesn't work
+- Spotlight is a point light for some reason
 
 Imgui ui:
 	- Procedural texture stuff idk

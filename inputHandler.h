@@ -61,13 +61,14 @@ public:
 		}
 	}
 
-	void execute_key_action(float deltatime, GLFWwindow* window) {
+	void execute_key_action(float deltatime, GLFWwindow* window, std::vector<PointLight*> lights, int lightsNum, DirectionalLight dirLight) {
+		PointLight** lightsArr = lights.data();
 		for (auto const& [key, state] : key_states) {
 			if (state && key == GLFW_KEY_ESCAPE) {
 				glfwSetWindowShouldClose(window, true);
 			}
 			else if (key == GLFW_KEY_G) {
-				ImguiHandler::showWindow(key_states[key], window);
+				ImguiHandler::showWindow(key_states[key], window, lightsArr, lightsNum, dirLight);
 			}
 			else if (state) {
 				camera->ProcessKeyboard(key_direction_map[key], deltatime);
