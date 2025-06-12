@@ -26,11 +26,20 @@ public:
 		ImGui::NewFrame();
 	}
 
-	static void showWindow(bool showWindow, GLFWwindow* window, PointLight* lights[256], int lightNum, DirectionalLight& dirLight) {
+	static void showWindow(bool showWindow, GLFWwindow* window, PointLight* lights[256], uint32_t lightNum, DirectionalLight& dirLight, std::vector<Model*> &objects) {
 		if (showWindow) {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			ImGui::ShowDemoWindow();
+			ImGui::Begin("Object window");
+			int objectNum = objects.size();
+			for (uint32_t i = 0u; i < objectNum; i++) {
+				objects[i]->ImGuiSection();
+			}
+			ImGui::End();
+
 			ImGui::Begin("Light window");
-			for (uint16_t i = 0; i < lightNum; i++) {
+			dirLight.ImGuiSection();
+			for (uint8_t i = 0u; i < lightNum; i++) {
 				lights[i]->ImGuiSection();
 			}
 			ImGui::End();

@@ -9,8 +9,9 @@ int w_height = 720;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 InputHandler inpHandler(&camera);
 
-int pointLightNum = 0;
-int spotLightNum = 0;
+uint8_t pointLightNum = 0u;
+uint8_t spotLightNum = 0u;
+uint32_t objectNum = 0u;
 
 int main()
 {
@@ -43,41 +44,40 @@ int main()
 	float lastFrame = 0.0f;
 
 	Shader lightIconShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl");
+	Shader blinnPhongShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
+	blinnPhongShader.use();
 
 	vector<PointLight*> lights;
+	vector<Model*> objects;
+
 
 	//Test code
-	Shader testShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
-	testShader.use();
+	
 
-	Model testObj("E:/projects/EpicEngine/models/cube/cube.obj");
+	Model testObj("E:/projects/EpicEngine/models/cube/cube.obj", objectNum, objects);
 	testObj.position.y = 2.0;
 
-	Model plane("E:/projects/EpicEngine/models/plane/plane.obj");
+	Model plane("E:/projects/EpicEngine/models/plane/plane.obj", objectNum, objects);
 	plane.scale = glm::vec3(5.0);
 	plane.position.y = -1.0;
 
-	Model monkey("E:/projects/EpicEngine/models/monkey/monkey.obj");
+	Model monkey("E:/projects/EpicEngine/models/monkey/monkey.obj", objectNum, objects);
 	monkey.position.x = -1.5;
 	monkey.matDiffuse = glm::vec3(1.0, 0.2, 0.1);
 
-	PointLight testLight(0, pointLightNum, lights, glm::vec3(0.0f, 2.5f, 0.2f), 10.0f, 10.0f, 10.0f, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(0.0));
+	SpotLight testLight(spotLightNum, lights, objectNum);
 	testLight.position.z = 2.5;
 	testLight.position.y = 0.2;
 
+	PointLight testPointLight(pointLightNum, lights, objectNum);
 
-	DirectionalLight testDirLight(glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f));
+	DirectionalLight testDirLight(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.1f), glm::vec3(0.1f), glm::vec3(0.1f));
 
-
-	/*glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.5f));
-	testShader.use();
-	testShader.setMatrix4fv("model", model);*/
 
 	glm::mat4 projection = glm::perspective(camera.Zoom, (float)w_width / (float)w_height, 0.1f, 100.0f);
 
 	//Bind view projection uniform buffers to binding point 0
-	glUniformBlockBinding(testShader.ID, testShader.viewProjBlockIndex, 0);
+	glUniformBlockBinding(blinnPhongShader.ID, blinnPhongShader.viewProjBlockIndex, 0);
 	glUniformBlockBinding(lightIconShader.ID, lightIconShader.viewProjBlockIndex, 0);
 
 	//Create view projection uniform buffer and set projection matrix
@@ -116,7 +116,8 @@ int main()
 
 		ImguiHandler::newFrameImgui();
 
-		testShader.use();
+		blinnPhongShader.use();
+		blinnPhongShader.set3fv("viewPosition", camera.Position);
 
 		glm::mat4 view = camera.GetViewMatrix();
 		
@@ -126,17 +127,18 @@ int main()
 
 		//test code
 
-		testObj.Draw(testShader, false, GL_TRIANGLES);
+		testObj.Draw(blinnPhongShader, false, GL_TRIANGLES);
 
-		plane.Draw(testShader, false, GL_TRIANGLES);
+		plane.Draw(blinnPhongShader, false, GL_TRIANGLES);
 
-		monkey.Draw(testShader, false, GL_TRIANGLES);
+		monkey.Draw(blinnPhongShader, false, GL_TRIANGLES);
 
-		testLight.Draw(testShader, lightIconShader);
+		testDirLight.sendToShader(blinnPhongShader);
 
-		testDirLight.sendToShader(testShader);
+		testLight.Draw(blinnPhongShader, lightIconShader);
+		testPointLight.Draw(blinnPhongShader, lightIconShader);
 
-		inpHandler.execute_key_action(deltaTime, window, lights, pointLightNum + spotLightNum, testDirLight);
+		inpHandler.execute_key_action(deltaTime, window, lights, pointLightNum + spotLightNum, testDirLight, objects);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

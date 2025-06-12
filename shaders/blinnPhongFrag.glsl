@@ -57,17 +57,17 @@ in vec3 normal;
 in vec3 fragPos;
 in vec2 texCoord;
 
-uniform vec3 viewPosition;
-
 out vec4 FragColor;
+
+uniform vec3 viewPosition;
 
 const int maxLights = 128;
 uniform PointLight pointLights[maxLights];
 uniform SpotLight spotLights[maxLights];
 uniform DirectionalLight directionalLight;
 
-uniform int pointLightsNum = 0;
-uniform int spotLightsNum = 0;
+uniform uint pointLightsNum = 0u;
+uniform uint spotLightsNum = 0u;
 
 uniform Material material;
 uniform HasTextureMaps textureMaps;
@@ -88,11 +88,11 @@ void main()
     vec3 viewDir = normalize(viewPosition - fragPos);
 
     vec3 lightData = calcDirLight(directionalLight, viewDir);
-    for(int i = 0; i < pointLightsNum; i++)
+    for(uint i = 0u; i < pointLightsNum; i++)
     {
         lightData += calcPointLight(pointLights[i], viewDir);
     }
-    for(int i = 0; i < spotLightsNum; i++)
+    for(uint i = 0u; i < spotLightsNum; i++)
     {
         lightData += calcSpotLight(spotLights[i], viewDir);
     }
@@ -181,7 +181,7 @@ vec3 calcSpotLight(SpotLight light, vec3 viewDir)
     float epsilon = light.cutoffAngle - light.outerCutoffAngle;
     float intensity = clamp((theta - light.outerCutoffAngle) / epsilon, 0.0, 1.0);
 
-    ambient *= attenuation;
+    ambient *= attenuation * intensity;
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;
 

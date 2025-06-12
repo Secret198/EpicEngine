@@ -76,6 +76,10 @@ class Shader{
             glUniform1i(glGetUniformLocation(ID, name), value);
         }
 
+        void set1ui(const char* name, uint32_t value) {
+            glUniform1ui(glGetUniformLocation(ID, name), value);
+        }
+
         void set3fv(const char* name, glm::vec3 value) {
             glUniform3fv(glGetUniformLocation(ID, name), 1, glm::value_ptr(value));
         }

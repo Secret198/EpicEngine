@@ -7,9 +7,14 @@
 #include <stb_image.h>
 #include <string>
 #include "../shaders/shaderClass.h"
-
+#include "../Lights/Light.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 class Model {
+private:
+	uint32_t id;
 public:
 	std::vector<Texture> textures_loaded;
 	std::vector<Mesh> meshes;
@@ -28,7 +33,11 @@ public:
 	GLenum textureType;
 	unsigned int textureId;
 
-	Model(std::string const path) : rotationAngle(0.0f), matShining(64.0f) {
+	Model(std::string const path, uint32_t& objectNum) :
+		rotationAngle(0.0f),
+		matShining(64.0f),
+		id(objectNum++)
+	{
 		loadModel(path);
 		position = glm::vec3(1.0f);
 		rotationAxis = glm::vec3(1.0f);
@@ -36,6 +45,22 @@ public:
 		matAmbient = glm::vec3(1.0f);
 		matDiffuse = glm::vec3(1.0f);
 		matSpecular = glm::vec3(1.0f);
+	}
+
+	Model(std::string const path, uint32_t& objectNum, std::vector<Model*> &objects) :
+		rotationAngle(0.0f),
+		matShining(64.0f),
+		id(objectNum++)
+	{
+		loadModel(path);
+		position = glm::vec3(1.0f);
+		rotationAxis = glm::vec3(1.0f);
+		scale = glm::vec3(1.0f);
+		matAmbient = glm::vec3(1.0f);
+		matDiffuse = glm::vec3(1.0f);
+		matSpecular = glm::vec3(1.0f);
+
+		objects.push_back(this);
 	}
 
 	void Draw(Shader& shader, bool customTexture, GLenum drawMode) {
@@ -94,10 +119,86 @@ public:
 		this->textureType = GL_TEXTURE_CUBE_MAP;
 	}
 
-	
+	void ImGuiSection() {
+		char name[50];
+		Light::concatStrings(name, "Object ", std::to_string(id).c_str(), "");
+		ImGui::Separator();
+		ImGui::Text(name);
+
+		ImGui::Separator();
+		ImGui::Text("Position");
+		ImGui::SameLine();
+		ImGui::PushItemWidth(100.0f);
+
+		Light::concatStrings(name, "x##posObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &position.x, 0.01f);
+		ImGui::SameLine();
+
+		Light::concatStrings(name, "y##posObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &position.y, 0.01f);
+		ImGui::SameLine();
+
+		Light::concatStrings(name, "z##posObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &position.z, 0.01f);
+
+
+		ImGui::Text("Rotation axis");
+		ImGui::SameLine();
+		Light::concatStrings(name, "x##rotObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &rotationAxis.x, 0.01f);
+		ImGui::SameLine();
+
+		Light::concatStrings(name, "y##rotObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &rotationAxis.y, 0.01f);
+		ImGui::SameLine();
+
+		Light::concatStrings(name, "z##rotObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &rotationAxis.z, 0.01f);
+
+		Light::concatStrings(name, "Angle##rotObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &rotationAngle, 0.1f);
+
+
+		ImGui::Text("Scale");
+		ImGui::SameLine();
+		Light::concatStrings(name, "x##scaleObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &scale.x, 0.01f);
+		ImGui::SameLine();
+
+		Light::concatStrings(name, "y##scaleObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &scale.y, 0.01f);
+		ImGui::SameLine();
+
+		Light::concatStrings(name, "z##scaleObj", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &scale.z, 0.01f);
+
+
+		ImGui::Separator();
+
+		ImGui::PushItemWidth(200.0f);
+		Light::concatStrings(name, "Ambient##ambObj", std::to_string(id).c_str(), "");
+		ImGui::ColorPicker3(name, (float*)&matAmbient, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_NoSidePreview);
+
+		ImGui::SameLine();
+
+		Light::concatStrings(name, "Diffuse##diffObj", std::to_string(id).c_str(), "");
+		ImGui::ColorPicker3(name, (float*)&matDiffuse, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_NoSidePreview);
+
+		ImGui::SameLine();
+
+		Light::concatStrings(name, "Specular##specObj", std::to_string(id).c_str(), "");
+		ImGui::ColorPicker3(name, (float*)&matSpecular, ImGuiColorEditFlags_Float | ImGuiColorEditFlags_NoSidePreview);
+
+
+		ImGui::PushItemWidth(100.0f);
+		Light::concatStrings(name, "Shining##", std::to_string(id).c_str(), "");
+		ImGui::DragFloat(name, &matShining, 0.1f, 0.0f, 1000.0f);
+
+
+		ImGui::Separator();
+	}
 	
 private:
-
 
 	void loadModel(std::string const path) {
 		Assimp::Importer import;
