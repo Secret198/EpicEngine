@@ -9,8 +9,8 @@ int w_height = 720;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 InputHandler inpHandler(&camera);
 
-uint8_t pointLightNum = 0u;
-uint8_t spotLightNum = 0u;
+uint16_t pointLightNum = 0u;
+uint16_t spotLightNum = 0u;
 uint32_t objectNum = 0u;
 
 int main()
@@ -51,28 +51,21 @@ int main()
 	vector<Model*> objects;
 
 
-	//Test code
-	
+	//Model testObj("E:/projects/EpicEngine/models/cube/cube.obj", objectNum, objects);
+	//testObj.position.y = 2.0;
 
-	Model testObj("E:/projects/EpicEngine/models/cube/cube.obj", objectNum, objects);
-	testObj.position.y = 2.0;
-
-	Model plane("E:/projects/EpicEngine/models/plane/plane.obj", objectNum, objects);
-	plane.scale = glm::vec3(5.0);
-	plane.position.y = -1.0;
+	//Model plane("E:/projects/EpicEngine/models/plane/plane.obj", objectNum, objects);
+	//plane.scale = glm::vec3(5.0);
+	//plane.position.y = -1.0;
 
 	Model monkey("E:/projects/EpicEngine/models/monkey/monkey.obj", objectNum, objects);
-	monkey.position.x = -1.5;
+	monkey.position.x = -5.5;
 	monkey.matDiffuse = glm::vec3(1.0, 0.2, 0.1);
 
-	SpotLight testLight(spotLightNum, lights, objectNum);
-	testLight.position.z = 2.5;
-	testLight.position.y = 0.2;
 
-	PointLight testPointLight(pointLightNum, lights, objectNum);
+	DirectionalLight sun(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.1f), glm::vec3(0.1f), glm::vec3(0.1f));
 
-	DirectionalLight testDirLight(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.1f), glm::vec3(0.1f), glm::vec3(0.1f));
-
+	MarchingCubes theCubes(0.5f, 10.0f, blinnPhongShader, objectNum, glm::vec3(-1.0), glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
 
 	glm::mat4 projection = glm::perspective(camera.Zoom, (float)w_width / (float)w_height, 0.1f, 100.0f);
 
@@ -125,20 +118,13 @@ int main()
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view));
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		//test code
-
-		testObj.Draw(blinnPhongShader, false, GL_TRIANGLES);
-
-		plane.Draw(blinnPhongShader, false, GL_TRIANGLES);
+		sun.sendToShader(blinnPhongShader);
+		theCubes.Construct();
 
 		monkey.Draw(blinnPhongShader, false, GL_TRIANGLES);
 
-		testDirLight.sendToShader(blinnPhongShader);
 
-		testLight.Draw(blinnPhongShader, lightIconShader);
-		testPointLight.Draw(blinnPhongShader, lightIconShader);
-
-		inpHandler.execute_key_action(deltaTime, window, lights, pointLightNum + spotLightNum, testDirLight, objects);
+		inpHandler.execute_key_action(deltaTime, window, lights, pointLightNum + spotLightNum, sun, objects);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -33,6 +33,20 @@ public:
 	GLenum textureType;
 	unsigned int textureId;
 
+	Model(uint32_t& objectNum, Mesh mesh) :
+		rotationAngle(0.0f),
+		matShining(64.0f),
+		id(objectNum++)
+	{
+		position = glm::vec3(1.0f);
+		rotationAxis = glm::vec3(1.0f);
+		scale = glm::vec3(1.0f);
+		matAmbient = glm::vec3(1.0f);
+		matDiffuse = glm::vec3(1.0f);
+		matSpecular = glm::vec3(1.0f);
+		meshes.push_back(mesh);
+	}
+
 	Model(std::string const path, uint32_t& objectNum) :
 		rotationAngle(0.0f),
 		matShining(64.0f),

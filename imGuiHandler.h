@@ -29,7 +29,7 @@ public:
 	static void showWindow(bool showWindow, GLFWwindow* window, PointLight* lights[256], uint32_t lightNum, DirectionalLight& dirLight, std::vector<Model*> &objects) {
 		if (showWindow) {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			ImGui::ShowDemoWindow();
+			//ImGui::ShowDemoWindow();
 			ImGui::Begin("Object window");
 			int objectNum = objects.size();
 			for (uint32_t i = 0u; i < objectNum; i++) {
