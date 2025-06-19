@@ -5,6 +5,11 @@
 #include "models/model.h"
 #include <cmath>
 
+#define P1 cube.vert[edgeTovertex[sideIndex * 2]].Position
+#define P2 cube.vert[edgeTovertex[sideIndex * 2 + 1]].Position
+#define V1 cube.value[edgeTovertex[sideIndex * 2]]
+#define V2 cube.value[edgeTovertex[sideIndex * 2 + 1]]
+
 struct GridCell {
 	Vertex vert[8];
 	float value[8];
@@ -493,6 +498,10 @@ private:
 		}
 	}
 
+	glm::vec3 calcVertexPosition(GridCell cube, uint16_t sideIndex) {
+		return P1 + (isoValue - V1) * (P2 - P1) / (V2 - V1);
+	}
+
 	void ConstructMesh() {
 		float sideX = abs(boundingBox[0].x - boundingBox[1].x);
 		float sideY = abs(boundingBox[0].y - boundingBox[4].y);
@@ -525,10 +534,8 @@ private:
 					for (uint16_t l = 0; l < 12; l++) {
 						if (sides & (1 << l)) {
 							Vertex newVertex;
-							newVertex.Position.x = (cube.vert[edgeTovertex[l * 2]].Position.x + cube.vert[edgeTovertex[l * 2 + 1]].Position.x) / 2.0f;
-							newVertex.Position.y = (cube.vert[edgeTovertex[l * 2]].Position.y + cube.vert[edgeTovertex[l * 2 + 1]].Position.y) / 2.0f;
-							newVertex.Position.z = (cube.vert[edgeTovertex[l * 2]].Position.z + cube.vert[edgeTovertex[l * 2 + 1]].Position.z) / 2.0f;
-							
+							newVertex.Position = calcVertexPosition(cube, l);
+
 							uint32_t vertexIndex = findVertex(vertices, newVertex);
 
 							if (vertexIndex == -1) {
