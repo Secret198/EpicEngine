@@ -2,6 +2,7 @@
 #define MARCHING_CUBES_H
 
 #include "models/mesh.h"
+#include "models/model.h"
 #include <cmath>
 
 struct GridCell {
@@ -12,17 +13,25 @@ struct GridCell {
 class MarchingCubes {
 private: 
 	uint32_t& objectNum;
+	std::vector<Model*>& objects;
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
+	Model marchModel;
 public:
 	float isoValue;
 	glm::vec3 boundingBox[8];
 	float segmentNum;
 	Shader& shaderProgram;
 
-	MarchingCubes(float isoValue, float segmentNum, Shader& shaderProgram, uint32_t& objectNum, glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 vert3, glm::vec3 vert4, glm::vec3 vert5, glm::vec3 vert6, glm::vec3 vert7)
+
+
+	MarchingCubes(float isoValue, float segmentNum, Shader& shaderProgram, uint32_t& objectNum, std::vector<Model*>& objects, glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 vert3, glm::vec3 vert4, glm::vec3 vert5, glm::vec3 vert6, glm::vec3 vert7)
 		: isoValue(isoValue),
 		segmentNum(segmentNum),
 		shaderProgram(shaderProgram),
-		objectNum(objectNum)
+		objectNum(objectNum),
+		objects(objects),
+		marchModel(objectNum, objects)
 	{
 		boundingBox[0] = vert0;
 		boundingBox[1] = vert1;
@@ -32,7 +41,17 @@ public:
 		boundingBox[5] = vert5;
 		boundingBox[6] = vert6;
 		boundingBox[7] = vert7;
+
+		ConstructMesh();
 	}
+
+	void ImguiExtraSection() {
+		char name[50];
+		std::string idStr = std::to_string(marchModel.id);
+		Light::concatStrings(name, "Iso level##", idStr.c_str(), "");
+		ImGui::DragFloat(name, &isoValue, 0.01f);
+	}
+
 private:
 
 	const int edgeTable[256] = {
@@ -353,6 +372,15 @@ private:
 		return -1;
 	}
 
+	int findIndex(std::vector<uint32_t> indices, uint32_t ind) {
+		for (int i = 0; i < indices.size(); i++) {
+			if (indices[i] == ind) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	static float sphereEquation(float x, float y, float z) {
 		return x * x + y * y + z * z - 1.0f;
 	}
@@ -374,14 +402,98 @@ private:
 	}
 
 	glm::vec3 calcNormal(glm::vec3 vert1, glm::vec3 vert2, glm::vec3 vert3) {
-		glm::vec3 vector1 = vert1 - vert2;
-		glm::vec3 vector2 = vert1 - vert3;
+		glm::vec3 vector1 = vert2 - vert1;
+		glm::vec3 vector2 = vert3 - vert1;
 
 		return glm::cross(vector1, vector2);
 	}
 
-public:
-	void Construct() {
+	void calcSurfaceNormals(std::map<uint16_t, glm::vec3>& faceVectors, std::map<uint16_t, std::vector<uint16_t>>& adjecentFaces) {
+		for (uint16_t i = 0; i < indices.size(); i += 3) {
+			faceVectors.insert({ i / 3, calcNormal(vertices[indices[i]].Position, vertices[indices[i + 1]].Position, vertices[indices[i + 2]].Position) });
+			if (adjecentFaces.contains(indices[i])) {
+				adjecentFaces[indices[i]].push_back(i / 3);
+			}
+			else {
+				std::vector<uint16_t> faces;
+				faces.push_back(i / 3);
+				adjecentFaces.insert({ indices[i], faces});
+			}
+			if (adjecentFaces.contains(indices[i + 1])) {
+				adjecentFaces[indices[i + 1]].push_back(i / 3);
+			}
+			else {
+				std::vector<uint16_t> faces;
+				faces.push_back(i / 3);
+				adjecentFaces.insert({ indices[i + 1], faces });
+			}
+			if (adjecentFaces.contains(indices[i + 2])) {
+				adjecentFaces[indices[i + 2]].push_back(i / 3);
+			}
+			else {
+				std::vector<uint16_t> faces;
+				faces.push_back(i / 3);
+				adjecentFaces.insert({ indices[i + 2], faces });
+			}
+		}
+	}
+
+	void calcSmoothVertexNormals(std::map<uint16_t, glm::vec3>& faceVectors, std::map<uint16_t, std::vector<uint16_t>>& adjecentFaces) {
+		for (auto const& [vert, faces] : adjecentFaces) {
+			glm::vec3 normalSum = glm::vec3(0.0);
+			for (auto i : faces) {
+				normalSum += glm::normalize(faceVectors[i]);
+			}
+			//normalSum /= faces.size();
+			vertices[vert].Normal = glm::normalize(normalSum);
+		}
+	}
+
+	void calcHardVertexNormals() {
+		std::vector<uint32_t> setIndices;
+		uint16_t indexBufSize = indices.size();
+		for (uint16_t i = 0; i < indexBufSize; i += 3) {
+			glm::vec3 faceNormal = calcNormal(vertices[indices[i]].Position, vertices[indices[i + 1]].Position, vertices[indices[i + 2]].Position);
+
+			if (findIndex(setIndices, indices[i]) != -1) {
+				Vertex newVert;
+				newVert.Position = vertices[indices[i]].Position;
+				newVert.Normal = faceNormal;
+				vertices.push_back(newVert);
+				indices.push_back(vertices.size()-1);
+			}
+			else {
+				vertices[indices[i]].Normal = faceNormal;
+				setIndices.push_back(indices[i]);
+			}
+
+			if (findIndex(setIndices, indices[i+1]) != -1) {
+				Vertex newVert;
+				newVert.Position = vertices[indices[i+1]].Position;
+				newVert.Normal = faceNormal;
+				vertices.push_back(newVert);
+				indices.push_back(vertices.size() - 1);
+			}
+			else {
+				vertices[indices[i+1]].Normal = faceNormal;
+				setIndices.push_back(indices[i + 1]);
+			}
+
+			if (findIndex(setIndices, indices[i+2]) != -1) {
+				Vertex newVert;
+				newVert.Position = vertices[indices[i+2]].Position;
+				newVert.Normal = faceNormal;
+				vertices.push_back(newVert);
+				indices.push_back(vertices.size() - 1);
+			}
+			else {
+				vertices[indices[i+2]].Normal = faceNormal;
+				setIndices.push_back(indices[i + 2]);
+			}
+		}
+	}
+
+	void ConstructMesh() {
 		float sideX = abs(boundingBox[0].x - boundingBox[1].x);
 		float sideY = abs(boundingBox[0].y - boundingBox[4].y);
 		float sideZ = abs(boundingBox[0].z - boundingBox[3].z);
@@ -389,12 +501,10 @@ public:
 		float segmentDistY = sideY / segmentNum;
 		float segmentDistZ = sideZ / segmentNum;
 
-		std::vector<Vertex> vertices;
-		std::vector<uint32_t> indices;
 
-		for (float i = boundingBox[0].x; i <= boundingBox[1].x; i += segmentDistX) {
-			for (float j = boundingBox[0].y; j <= boundingBox[4].y; j += segmentDistY) {
-				for (float k = boundingBox[0].z; k <= boundingBox[3].z; k += segmentDistZ) {
+		for (float i = boundingBox[0].x; i < boundingBox[1].x + segmentDistX; i += segmentDistX) {
+			for (float j = boundingBox[0].y; j < boundingBox[4].y + segmentDistY; j += segmentDistY) {
+				for (float k = boundingBox[0].z; k < boundingBox[3].z + segmentDistZ; k += segmentDistZ) {
 					GridCell cube;
 					cube.vert[0].Position = glm::vec3(i, j, k);
 					cube.vert[1].Position = glm::vec3(i + segmentDistX, j, k);
@@ -439,16 +549,23 @@ public:
 			}
 		}
 
-		for (int i = 0; i < indices.size();i+=3) {
-			vertices[indices[i]].Normal = calcNormal(vertices[indices[i]].Position, vertices[indices[i + 1]].Position, vertices[indices[i + 2]].Position);
-			vertices[indices[i+1]].Normal = calcNormal(vertices[indices[i]].Position, vertices[indices[i + 1]].Position, vertices[indices[i + 2]].Position);
-			vertices[indices[i+2]].Normal = calcNormal(vertices[indices[i]].Position, vertices[indices[i + 1]].Position, vertices[indices[i + 2]].Position);
-		}
+		std::map<uint16_t, glm::vec3> faceVectors;
+		std::map<uint16_t, std::vector<uint16_t>> adjecentFaces;
 
-		Mesh object(vertices, indices, std::vector<Texture>());
-		Model march(objectNum, object);
+		calcSurfaceNormals(faceVectors, adjecentFaces);
+		calcSmoothVertexNormals(faceVectors, adjecentFaces);
+
+		//calcHardVertexNormals();
+
+		Mesh theMesh(vertices, indices, std::vector<Texture>());
+		marchModel.meshes.push_back(theMesh);
+	}
+
+public:
+	void Draw() {
+
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		march.Draw(shaderProgram, false, GL_TRIANGLES);
+		marchModel.Draw(shaderProgram, false, GL_TRIANGLES);
 	}
 
 };

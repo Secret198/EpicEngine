@@ -51,21 +51,24 @@ int main()
 	vector<Model*> objects;
 
 
-	//Model testObj("E:/projects/EpicEngine/models/cube/cube.obj", objectNum, objects);
-	//testObj.position.y = 2.0;
 
-	//Model plane("E:/projects/EpicEngine/models/plane/plane.obj", objectNum, objects);
-	//plane.scale = glm::vec3(5.0);
-	//plane.position.y = -1.0;
+	Model cube("E:/projects/EpicEngine/models/cube/test.fbx", objectNum, objects);
+	cube.position.x = -2.0;
+
+	Model plane("E:/projects/EpicEngine/models/plane/plane.obj", objectNum, objects);
+	plane.scale = glm::vec3(5.0);
+	plane.position.y = -1.0;
 
 	Model monkey("E:/projects/EpicEngine/models/monkey/monkey.obj", objectNum, objects);
 	monkey.position.x = -5.5;
 	monkey.matDiffuse = glm::vec3(1.0, 0.2, 0.1);
 
-
 	DirectionalLight sun(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.1f), glm::vec3(0.1f), glm::vec3(0.1f));
+	PointLight thePoint(pointLightNum, lights, objectNum);
+	SpotLight theSpot(spotLightNum, lights, objectNum);
 
-	MarchingCubes theCubes(0.5f, 10.0f, blinnPhongShader, objectNum, glm::vec3(-1.0), glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
+	//MarchingCubes theCubes(0.3f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-1.0), glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
+	MarchingCubes theCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-2.0), glm::vec3(2.0f, -2.0f, -2.0f), glm::vec3(2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, 2.0f));
 
 	glm::mat4 projection = glm::perspective(camera.Zoom, (float)w_width / (float)w_height, 0.1f, 100.0f);
 
@@ -119,10 +122,16 @@ int main()
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		sun.sendToShader(blinnPhongShader);
-		theCubes.Construct();
+		theSpot.Draw(blinnPhongShader, lightIconShader);
+
+		thePoint.Draw(blinnPhongShader, lightIconShader);
+
+		theCubes.Draw();
 
 		monkey.Draw(blinnPhongShader, false, GL_TRIANGLES);
 
+		cube.Draw(blinnPhongShader, false, GL_TRIANGLES);
+		plane.Draw(blinnPhongShader, false, GL_TRIANGLES);
 
 		inpHandler.execute_key_action(deltaTime, window, lights, pointLightNum + spotLightNum, sun, objects);
 

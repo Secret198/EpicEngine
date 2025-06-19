@@ -11,8 +11,8 @@
 
 class PointLight : public Light {
 protected:
-	uint8_t id;
-	uint8_t& lightNum;
+	uint16_t id;
+	uint16_t& lightNum;
 
 	virtual void sendToShader(Shader& shader) {
 		char result[50];
@@ -51,7 +51,7 @@ public:
 	float quadratic;
 	Model lightIcon;
 	
-	PointLight(uint8_t &lightNum, std::vector<PointLight*>& container, uint32_t &objectNum) 
+	PointLight(uint16_t &lightNum, std::vector<PointLight*>& container, uint32_t &objectNum) 
 		: Light(),
 		position(glm::vec3(0.0)), 
 		constant(1.0),
@@ -64,7 +64,7 @@ public:
 		container.push_back(this);
 	}
 
-	PointLight(uint8_t& lightNum, std::vector<PointLight*>& container, uint32_t &objectNum, glm::vec3 position, float constant, float linear, float quadratic, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+	PointLight(uint16_t& lightNum, std::vector<PointLight*>& container, uint32_t &objectNum, glm::vec3 position, float constant, float linear, float quadratic, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
 		: Light(ambient, diffuse, specular),
 		position(position),
 		constant(constant),

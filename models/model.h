@@ -11,11 +11,12 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <functional>
+
 
 class Model {
-private:
-	uint32_t id;
 public:
+	uint32_t id;
 	std::vector<Texture> textures_loaded;
 	std::vector<Mesh> meshes;
 	std::string directory;
@@ -33,18 +34,16 @@ public:
 	GLenum textureType;
 	unsigned int textureId;
 
-	Model(uint32_t& objectNum, Mesh mesh) :
+
+
+	Model(uint32_t& objectNum, std::vector<Model*>& objects) :
 		rotationAngle(0.0f),
 		matShining(64.0f),
 		id(objectNum++)
 	{
-		position = glm::vec3(1.0f);
-		rotationAxis = glm::vec3(1.0f);
-		scale = glm::vec3(1.0f);
-		matAmbient = glm::vec3(1.0f);
-		matDiffuse = glm::vec3(1.0f);
-		matSpecular = glm::vec3(1.0f);
-		meshes.push_back(mesh);
+		initValues();
+
+		objects.push_back(this);
 	}
 
 	Model(std::string const path, uint32_t& objectNum) :
@@ -53,12 +52,8 @@ public:
 		id(objectNum++)
 	{
 		loadModel(path);
-		position = glm::vec3(1.0f);
-		rotationAxis = glm::vec3(1.0f);
-		scale = glm::vec3(1.0f);
-		matAmbient = glm::vec3(1.0f);
-		matDiffuse = glm::vec3(1.0f);
-		matSpecular = glm::vec3(1.0f);
+		initValues();
+
 	}
 
 	Model(std::string const path, uint32_t& objectNum, std::vector<Model*> &objects) :
@@ -67,12 +62,7 @@ public:
 		id(objectNum++)
 	{
 		loadModel(path);
-		position = glm::vec3(1.0f);
-		rotationAxis = glm::vec3(1.0f);
-		scale = glm::vec3(1.0f);
-		matAmbient = glm::vec3(1.0f);
-		matDiffuse = glm::vec3(1.0f);
-		matSpecular = glm::vec3(1.0f);
+		initValues();
 
 		objects.push_back(this);
 	}
@@ -208,11 +198,20 @@ public:
 		Light::concatStrings(name, "Shining##", std::to_string(id).c_str(), "");
 		ImGui::DragFloat(name, &matShining, 0.1f, 0.0f, 1000.0f);
 
-
 		ImGui::Separator();
+
 	}
 	
 private:
+
+	void initValues() {
+		position = glm::vec3(1.0f);
+		rotationAxis = glm::vec3(1.0f);
+		scale = glm::vec3(1.0f);
+		matAmbient = glm::vec3(1.0f);
+		matDiffuse = glm::vec3(1.0f);
+		matSpecular = glm::vec3(1.0f);
+	}
 
 	void loadModel(std::string const path) {
 		Assimp::Importer import;
