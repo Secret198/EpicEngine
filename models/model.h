@@ -12,9 +12,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <functional>
+#include "../Object.h"
 
-
-class Model {
+class Model : Object {
 public:
 	uint32_t id;
 	std::vector<Texture> textures_loaded;
@@ -36,7 +36,7 @@ public:
 
 
 
-	Model(uint32_t& objectNum, std::vector<Model*>& objects) :
+	Model(uint32_t& objectNum, std::vector<Object*>& objects) :
 		rotationAngle(0.0f),
 		matShining(64.0f),
 		id(objectNum++)
@@ -56,7 +56,7 @@ public:
 
 	}
 
-	Model(std::string const path, uint32_t& objectNum, std::vector<Model*> &objects) :
+	Model(std::string const path, uint32_t& objectNum, std::vector<Object*> &objects) :
 		rotationAngle(0.0f),
 		matShining(64.0f),
 		id(objectNum++)
@@ -67,7 +67,7 @@ public:
 		objects.push_back(this);
 	}
 
-	void Draw(Shader& shader, bool customTexture, GLenum drawMode) {
+	void Draw(Shader* shader, bool customTexture, GLenum drawMode) {
 		setTransforms(shader);
 		for (int i = 0; i < meshes.size(); i++)
 		{
@@ -80,7 +80,7 @@ public:
 		}
 	}
 
-	void Draw(Shader& shader, GLenum type, unsigned int texId, GLenum drawMode) {
+	void Draw(Shader* shader, GLenum type, unsigned int texId, GLenum drawMode) {
 		setTransforms(shader);
 		for (int i = 0; i < meshes.size(); i++)
 		{
@@ -379,8 +379,8 @@ private:
 		return textureId;
 	}
 
-	void setTransforms(Shader &shader) {
-		shader.use();
+	void setTransforms(Shader* shader) {
+		shader->use();
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, position);
 
@@ -388,18 +388,18 @@ private:
 
 		model = glm::scale(model, scale);
 
-		shader.setMatrix4fv("model", model);
+		shader->setMatrix4fv("model", model);
 
-		shader.set3fv("material.ambient", matAmbient);
-		shader.set3fv("material.diffuse", matDiffuse);
-		shader.set3fv("material.specular", matSpecular);
-		shader.set1f("material.shining", matShining);
+		shader->set3fv("material.ambient", matAmbient);
+		shader->set3fv("material.diffuse", matDiffuse);
+		shader->set3fv("material.specular", matSpecular);
+		shader->set1f("material.shining", matShining);
 
 		bool hasDiffuse = false;
 		bool hasSpecular = false;
 		if (textures_loaded.size() == 0) {
-			shader.set1b("textureMaps.hasDiffuseMap", false);
-			shader.set1b("textureMaps.hasSpecularTexture", false);
+			shader->set1b("textureMaps.hasDiffuseMap", false);
+			shader->set1b("textureMaps.hasSpecularTexture", false);
 		}
 		else {
 			for (auto i : textures_loaded) {
@@ -410,8 +410,8 @@ private:
 					hasSpecular = true;
 				}
 			}
-			shader.set1b("textureMaps.hasDiffuseMap", hasDiffuse);
-			shader.set1b("textureMaps.hasSpecularTexture", hasSpecular);
+			shader->set1b("textureMaps.hasDiffuseMap", hasDiffuse);
+			shader->set1b("textureMaps.hasSpecularTexture", hasSpecular);
 
 		}
 	}

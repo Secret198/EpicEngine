@@ -38,7 +38,13 @@ public:
 		setupMesh();
 	}
 
-	void Draw(Shader& shader, GLenum drawMode) {
+	Mesh() {
+		verticies = std::vector<Vertex>();
+		indices = std::vector<unsigned int>();
+		textures = std::vector<Texture>();
+	}
+
+	void Draw(Shader* shader, GLenum drawMode) {
 		unsigned int diffuseNum = 1;
 		unsigned int specularNum = 1;
 		for (unsigned int i = 0; i < textures.size(); i++)
@@ -55,7 +61,7 @@ public:
 				number += std::to_string(specularNum++);
 			}
 
-			glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
+			glUniform1i(glGetUniformLocation(shader->ID, (name + number).c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, textures[i].id);
 		}
 
@@ -70,7 +76,7 @@ public:
 		glActiveTexture(GL_TEXTURE0);
 	}
 
-	void Draw(Shader& shader, GLenum textureType, unsigned int textureId, GLenum drawMode) {
+	void Draw(Shader* shader, GLenum textureType, unsigned int textureId, GLenum drawMode) {
 		try {
 			if (!textureType || !textureId) {
 				throw (textureId);
@@ -95,6 +101,7 @@ public:
 private:
 	unsigned int VBO, EBO;
 
+public:
 	void setupMesh() {
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
@@ -119,4 +126,5 @@ private:
 
 		glBindVertexArray(0);
 	}
+
 };

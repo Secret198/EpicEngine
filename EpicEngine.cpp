@@ -43,38 +43,48 @@ int main()
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
-	Shader lightIconShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl");
-	Shader blinnPhongShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
-	blinnPhongShader.use();
+	//shared_ptr<Shader> lightIconShader(new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl"));
+	//shared_ptr<Shader> blinnPhongShader(new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl"));
+
+	Shader* lightIconShader = new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl");
+	Shader* blinnPhongShader = new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
+	blinnPhongShader->use();
+
+	//Shader lightIconShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl");
+	//Shader blinnPhongShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
+	//blinnPhongShader.use();
 
 	vector<PointLight*> lights;
-	vector<Model*> objects;
+	vector<Object*> objects;
 
+	//PerlinNoise noise(2.0f);
+	//noise.getValue(glm::vec3(0.9, 1.5, 4.3));
 
+	Model* cube = new Model("E:/projects/EpicEngine/models/cube/test.fbx", objectNum, objects);
+	cube->position.x = -2.0;
 
-	Model cube("E:/projects/EpicEngine/models/cube/test.fbx", objectNum, objects);
-	cube.position.x = -2.0;
+	Model* plane = new Model("E:/projects/EpicEngine/models/plane/plane.obj", objectNum, objects);
+	plane->scale = glm::vec3(5.0);
+	plane->position.y = -1.0;
 
-	Model plane("E:/projects/EpicEngine/models/plane/plane.obj", objectNum, objects);
-	plane.scale = glm::vec3(5.0);
-	plane.position.y = -1.0;
-
-	Model monkey("E:/projects/EpicEngine/models/monkey/monkey.obj", objectNum, objects);
-	monkey.position.x = -5.5;
-	monkey.matDiffuse = glm::vec3(1.0, 0.2, 0.1);
+	Model* monkey = new Model("E:/projects/EpicEngine/models/monkey/monkey.obj", objectNum, objects);
+	monkey->position.x = -5.5;
+	monkey->matDiffuse = glm::vec3(1.0, 0.2, 0.1);
 
 	DirectionalLight sun(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.1f), glm::vec3(0.1f), glm::vec3(0.1f));
 	PointLight thePoint(pointLightNum, lights, objectNum);
 	SpotLight theSpot(spotLightNum, lights, objectNum);
 
-	//MarchingCubes theCubes(0.3f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-1.0), glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
-	MarchingCubes theCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-2.0), glm::vec3(2.0f, -2.0f, -2.0f), glm::vec3(2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, 2.0f));
+	MarchingCubes theCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-1.0), glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
+	//MarchingCubes* theCubes = new MarchingCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-2.0), glm::vec3(2.0f, -2.0f, -2.0f), glm::vec3(2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, 2.0f));
+
+
 
 	glm::mat4 projection = glm::perspective(camera.Zoom, (float)w_width / (float)w_height, 0.1f, 100.0f);
 
 	//Bind view projection uniform buffers to binding point 0
-	glUniformBlockBinding(blinnPhongShader.ID, blinnPhongShader.viewProjBlockIndex, 0);
-	glUniformBlockBinding(lightIconShader.ID, lightIconShader.viewProjBlockIndex, 0);
+	glUniformBlockBinding(blinnPhongShader->ID, blinnPhongShader->viewProjBlockIndex, 0);
+	glUniformBlockBinding(lightIconShader->ID, lightIconShader->viewProjBlockIndex, 0);
 
 	//Create view projection uniform buffer and set projection matrix
 	uint32_t viewProjectionUBO;
@@ -106,14 +116,13 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-
 		glClearColor(0.1f, 0.5f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ImguiHandler::newFrameImgui();
 
-		blinnPhongShader.use();
-		blinnPhongShader.set3fv("viewPosition", camera.Position);
+		blinnPhongShader->use();
+		blinnPhongShader->set3fv("viewPosition", camera.Position);
 
 		glm::mat4 view = camera.GetViewMatrix();
 		
@@ -126,12 +135,12 @@ int main()
 
 		thePoint.Draw(blinnPhongShader, lightIconShader);
 
-		theCubes.Draw();
+		theCubes.ConstructMesh();
 
-		monkey.Draw(blinnPhongShader, false, GL_TRIANGLES);
+		monkey->Draw(blinnPhongShader, false, GL_TRIANGLES);
 
-		cube.Draw(blinnPhongShader, false, GL_TRIANGLES);
-		plane.Draw(blinnPhongShader, false, GL_TRIANGLES);
+		cube->Draw(blinnPhongShader, false, GL_TRIANGLES);
+		plane->Draw(blinnPhongShader, false, GL_TRIANGLES);
 
 		inpHandler.execute_key_action(deltaTime, window, lights, pointLightNum + spotLightNum, sun, objects);
 
@@ -143,6 +152,13 @@ int main()
 	}
 	
 	ImguiHandler::destroyImgui();
+
+	delete blinnPhongShader;
+	delete lightIconShader;
+	delete monkey;
+	delete cube;
+	delete plane;
+	//delete theCubes;
 
 	glfwDestroyWindow(window);
 	glfwTerminate();

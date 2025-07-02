@@ -90,42 +90,42 @@ public:
 	}
 
 protected:
-	void sendToShader(Shader& shader) override{
+	void sendToShader(Shader* shader) override{
 		char result[50];
 
 		std::string idStr = std::to_string(id);
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].position");
-		shader.set3fv(result, position);
+		shader->set3fv(result, position);
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].ambient");
-		shader.set3fv(result, ambient);
+		shader->set3fv(result, ambient);
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].diffuse");
-		shader.set3fv(result, diffuse);
+		shader->set3fv(result, diffuse);
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].specular");
-		shader.set3fv(result, specular);
+		shader->set3fv(result, specular);
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].constant");
-		shader.set1f(result, constant);
+		shader->set1f(result, constant);
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].linear");
-		shader.set1f(result, linear);
+		shader->set1f(result, linear);
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].quadratic");
-		shader.set1f(result, quadratic);
+		shader->set1f(result, quadratic);
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].direction");
-		shader.set3fv(result, direction);
+		shader->set3fv(result, direction);
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].cutoffAngle");
-		shader.set1f(result, glm::cos(glm::radians(cutoffAngle)));
+		shader->set1f(result, glm::cos(glm::radians(cutoffAngle)));
 
 		concatStrings(result, "spotLights[", idStr.c_str(), "].outerCutoffAngle");
-		shader.set1f(result, glm::cos(glm::radians(outerCutoffAngle)));
+		shader->set1f(result, glm::cos(glm::radians(outerCutoffAngle)));
 
-		shader.set1ui("spotLightsNum", lightNum);
+		shader->set1ui("spotLightsNum", lightNum);
 
 	}
 

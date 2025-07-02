@@ -12,7 +12,7 @@ endif()
 
 project ("EpicEngine")
 # Add source to this project's executable.
-add_executable (EpicEngine "EpicEngine.cpp" "EpicEngine.h" "camera.h" "shaders/shaderClass.h" "models/model.h" "models/mesh.h" "inputHandler.h" "imGuiHandler.h" "Lights/Light.h" "Lights/PointLight.h" "Lights/DirectionalLight.h" "Lights/SpotLight.h" "MarchingCubes.h")
+add_executable (EpicEngine "EpicEngine.cpp" "EpicEngine.h" "camera.h" "shaders/shaderClass.h" "models/model.h" "models/mesh.h" "inputHandler.h" "imGuiHandler.h" "Lights/Light.h" "Lights/PointLight.h" "Lights/DirectionalLight.h" "Lights/SpotLight.h" "MarchingCubes.h" "PerlinNoise.h" "Object.h")
 
 
 add_subdirectory(dependencies/stb_image)

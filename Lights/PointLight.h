@@ -14,33 +14,33 @@ protected:
 	uint16_t id;
 	uint16_t& lightNum;
 
-	virtual void sendToShader(Shader& shader) {
+	virtual void sendToShader(Shader* shader) {
 		char result[50];
-		shader.use();
+		shader->use();
 		std::string idStr = std::to_string(id);
 
 		concatStrings(result, "pointLights[", idStr.c_str(), "].position");
-		shader.set3fv(result, position);
+		shader->set3fv(result, position);
 
 		concatStrings(result, "pointLights[", idStr.c_str(), "].ambient");
-		shader.set3fv(result, ambient);
+		shader->set3fv(result, ambient);
 
 		concatStrings(result, "pointLights[", idStr.c_str(), "].diffuse");
-		shader.set3fv(result, diffuse);
+		shader->set3fv(result, diffuse);
 
 		concatStrings(result, "pointLights[", idStr.c_str(), "].specular");
-		shader.set3fv(result, specular);
+		shader->set3fv(result, specular);
 
 		concatStrings(result, "pointLights[", idStr.c_str(), "].constant");
-		shader.set1f(result, constant);
+		shader->set1f(result, constant);
 
 		concatStrings(result, "pointLights[", idStr.c_str(), "].linear");
-		shader.set1f(result, linear);
+		shader->set1f(result, linear);
 
 		concatStrings(result, "pointLights[", idStr.c_str(), "].quadratic");
-		shader.set1f(result, quadratic);
+		shader->set1f(result, quadratic);
 
-		shader.set1ui("pointLightsNum", lightNum);
+		shader->set1ui("pointLightsNum", lightNum);
 
 	}
 
@@ -124,7 +124,7 @@ public:
 	}
 
 
-	void Draw(Shader& lightShader, Shader& iconShader) {
+	void Draw(Shader* lightShader, Shader* iconShader) {
 		lightIcon.position = this->position;
 		lightIcon.scale = glm::vec3(0.1, 0.1, 0.1);
 		sendToShader(lightShader);

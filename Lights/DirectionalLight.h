@@ -17,11 +17,11 @@ public:
 		: Light(amb, diff, spec), 
 		direction(direction){}
 
-	void sendToShader(Shader& shader) {
-		shader.set3fv("directionalLight.direction", direction);
-		shader.set3fv("directionalLight.ambient", ambient);
-		shader.set3fv("directionalLight.diffuse", diffuse);
-		shader.set3fv("directionalLight.specular", specular);
+	void sendToShader(Shader* shader) {
+		shader->set3fv("directionalLight.direction", direction);
+		shader->set3fv("directionalLight.ambient", ambient);
+		shader->set3fv("directionalLight.diffuse", diffuse);
+		shader->set3fv("directionalLight.specular", specular);
 	}
 
 	void ImGuiSection() {

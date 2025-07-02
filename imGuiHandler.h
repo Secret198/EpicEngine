@@ -6,6 +6,7 @@
 #include <imgui_impl_opengl3.h>
 #include "Lights/PointLight.h"
 #include "Lights/DirectionalLight.h"
+#include "Object.h"
 
 class ImguiHandler {
 public:
@@ -26,7 +27,7 @@ public:
 		ImGui::NewFrame();
 	}
 
-	static void showWindow(bool showWindow, GLFWwindow* window, PointLight* lights[256], uint32_t lightNum, DirectionalLight& dirLight, std::vector<Model*> &objects) {
+	static void showWindow(bool showWindow, GLFWwindow* window, PointLight* lights[256], uint32_t lightNum, DirectionalLight& dirLight, std::vector<Object*> &objects) {
 		if (showWindow) {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			//ImGui::ShowDemoWindow();
@@ -39,7 +40,7 @@ public:
 
 			ImGui::Begin("Light window");
 			dirLight.ImGuiSection();
-			for (uint8_t i = 0u; i < lightNum; i++) {
+			for (uint16_t i = 0u; i < lightNum; i++) {
 				lights[i]->ImGuiSection();
 			}
 			ImGui::End();

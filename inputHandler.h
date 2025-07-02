@@ -8,6 +8,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include "imGuiHandler.h"
+#include "Object.h"
 
 class InputHandler {
 private:
@@ -61,7 +62,7 @@ public:
 		}
 	}
 
-	void execute_key_action(float deltatime, GLFWwindow* window, std::vector<PointLight*> lights, uint8_t lightsNum, DirectionalLight& dirLight, std::vector<Model*>&objects) {
+	void execute_key_action(float deltatime, GLFWwindow* window, std::vector<PointLight*> lights, uint8_t lightsNum, DirectionalLight& dirLight, std::vector<Object*>&objects) {
 		PointLight** lightsArr = lights.data();
 		for (auto const& [key, state] : key_states) {
 			if (state && key == GLFW_KEY_ESCAPE) {
