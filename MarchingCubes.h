@@ -47,7 +47,7 @@ public:
 		objects.push_back(this);
 
 		marchModel.meshes.push_back(Mesh());
-
+		marchModel.meshes[0].setupMesh();
 		ConstructMesh();
 	}
 
@@ -574,7 +574,7 @@ public:
 		marchModel.meshes[0].indices = indices;
 		marchModel.meshes[0].verticies = vertices;
 
-		marchModel.meshes[0].setupMesh();
+		marchModel.meshes[0].sendToShader();
 
 		//calcHardVertexNormals();
 		Draw();

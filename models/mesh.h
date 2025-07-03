@@ -36,6 +36,7 @@ public:
 		this->textures = textures;
 
 		setupMesh();
+		sendToShader();
 	}
 
 	Mesh() {
@@ -97,16 +98,7 @@ public:
 		
 	}
 
-
-private:
-	unsigned int VBO, EBO;
-
-public:
-	void setupMesh() {
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO);
-		glGenBuffers(1, &EBO);
-
+	void sendToShader() {
 		glBindVertexArray(VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -125,6 +117,17 @@ public:
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
 
 		glBindVertexArray(0);
+	}
+private:
+	unsigned int VBO, EBO;
+
+public:
+	void setupMesh() {
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+		glGenBuffers(1, &EBO);
+
+
 	}
 
 };

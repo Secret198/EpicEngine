@@ -75,8 +75,8 @@ int main()
 	PointLight thePoint(pointLightNum, lights, objectNum);
 	SpotLight theSpot(spotLightNum, lights, objectNum);
 
-	MarchingCubes theCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-1.0), glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
-	//MarchingCubes* theCubes = new MarchingCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-2.0), glm::vec3(2.0f, -2.0f, -2.0f), glm::vec3(2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, 2.0f));
+	//MarchingCubes theCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-1.0), glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
+	MarchingCubes* theCubes = new MarchingCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-2.0), glm::vec3(2.0f, -2.0f, -2.0f), glm::vec3(2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, 2.0f));
 
 
 
@@ -135,7 +135,7 @@ int main()
 
 		thePoint.Draw(blinnPhongShader, lightIconShader);
 
-		theCubes.ConstructMesh();
+		theCubes->ConstructMesh();
 
 		monkey->Draw(blinnPhongShader, false, GL_TRIANGLES);
 
@@ -158,7 +158,7 @@ int main()
 	delete monkey;
 	delete cube;
 	delete plane;
-	//delete theCubes;
+	delete theCubes;
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
