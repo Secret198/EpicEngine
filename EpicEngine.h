@@ -19,7 +19,6 @@
 #include "Lights/SpotLight.h"
 #include "MarchingCubes.h"
 #include "Object.h"
-#include "PerlinNoise.h"
 #include <cstdlib>
 
 void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

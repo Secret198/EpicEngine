@@ -6,6 +6,7 @@
 #include <cmath>
 #include "Object.h"
 #include <cstdlib>
+#include "PerlinNoise.h"
 
 #define P1 cube.vert[edgeTovertex[sideIndex * 2]].Position
 #define P2 cube.vert[edgeTovertex[sideIndex * 2 + 1]].Position
@@ -21,19 +22,23 @@ class MarchingCubes : Object {
 private: 
 	uint32_t& objectNum;
 	Model marchModel;
+	PerlinNoise noise;
 public:
+	float noiseScale;
 	float isoValue;
 	glm::vec3 boundingBox[8];
 	float segmentNum;
 	Shader* shaderProgram;
 
 
-	MarchingCubes(float isoValue, float segmentNum, Shader* shaderProgram, uint32_t& objectNum, std::vector<Object*>& objects, glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 vert3, glm::vec3 vert4, glm::vec3 vert5, glm::vec3 vert6, glm::vec3 vert7)
+	MarchingCubes(float isoValue, float noiseScale, float segmentNum, Shader* shaderProgram, uint32_t& objectNum, std::vector<Object*>& objects, glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 vert3, glm::vec3 vert4, glm::vec3 vert5, glm::vec3 vert6, glm::vec3 vert7)
 		: isoValue(isoValue),
 		segmentNum(segmentNum),
 		shaderProgram(shaderProgram),
 		objectNum(objectNum),
-		marchModel(objectNum, objects)
+		marchModel(objectNum, objects),
+		noise(),
+		noiseScale(noiseScale)
 	{
 		boundingBox[0] = vert0;
 		boundingBox[1] = vert1;
@@ -56,6 +61,10 @@ public:
 		std::string idStr = std::to_string(marchModel.id);
 		Light::concatStrings(name, "Iso level##", idStr.c_str(), "");
 		ImGui::DragFloat(name, &isoValue, 0.01f);
+
+		Light::concatStrings(name, "Noise scale##", idStr.c_str(), "");
+		ImGui::DragFloat(name, &noiseScale, 0.01f);
+
 	}
 
 private:
@@ -405,7 +414,8 @@ private:
 
 	void calcCubeValues(GridCell& cube) {
 		for (int i = 0; i < 8; i++) {
-			cube.value[i] = sphereEquation(cube.vert[i].Position.x, cube.vert[i].Position.y, cube.vert[i].Position.z);
+			//cube.value[i] = sphereEquation(cube.vert[i].Position.x, cube.vert[i].Position.y, cube.vert[i].Position.z);
+			cube.value[i] = noise.getValue(cube.vert[i].Position, noiseScale);
 		}
 	}
 

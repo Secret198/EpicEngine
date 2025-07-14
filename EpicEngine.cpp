@@ -57,9 +57,6 @@ int main()
 	vector<PointLight*> lights;
 	vector<Object*> objects;
 
-	//PerlinNoise noise(2.0f);
-	//noise.getValue(glm::vec3(0.9, 1.5, 4.3));
-
 	Model* cube = new Model("E:/projects/EpicEngine/models/cube/test.fbx", objectNum, objects);
 	cube->position.x = -2.0;
 
@@ -76,7 +73,7 @@ int main()
 	SpotLight theSpot(spotLightNum, lights, objectNum);
 
 	//MarchingCubes theCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-1.0), glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
-	MarchingCubes* theCubes = new MarchingCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-2.0), glm::vec3(2.0f, -2.0f, -2.0f), glm::vec3(2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, 2.0f));
+	MarchingCubes* theCubes = new MarchingCubes(1.0f, 1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-2.0), glm::vec3(2.0f, -2.0f, -2.0f), glm::vec3(2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, 2.0f));
 
 
 
