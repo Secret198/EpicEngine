@@ -586,7 +586,6 @@ public:
 
 		marchModel.meshes[0].sendToShader();
 
-		//calcHardVertexNormals();
 		Draw();
 	}
 

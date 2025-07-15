@@ -19,7 +19,8 @@
 #include "Lights/SpotLight.h"
 #include "MarchingCubes.h"
 #include "Object.h"
-#include <cstdlib>
+#include "PostProcessing.h"
+#include <glm/glm.hpp>
 
 void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mousePosCallback(GLFWwindow* window, double xpos, double ypos);

@@ -6,12 +6,16 @@ using namespace std;
 int w_width = 1280;
 int w_height = 720;
 
+glm::vec4 backGroundColor(0.1f, 0.5f, 1.0f, 1.0f);
+
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 InputHandler inpHandler(&camera);
 
 uint16_t pointLightNum = 0u;
 uint16_t spotLightNum = 0u;
 uint32_t objectNum = 0u;
+
+bool postProcessingToggle = false;
 
 int main()
 {
@@ -46,16 +50,16 @@ int main()
 	//shared_ptr<Shader> lightIconShader(new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl"));
 	//shared_ptr<Shader> blinnPhongShader(new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl"));
 
+	Shader* screenShader = new Shader("E:/projects/EpicEngine/shaders/postProcessingVert.glsl", "E:/projects/EpicEngine/shaders/postProcessingFrag.glsl");
 	Shader* lightIconShader = new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl");
 	Shader* blinnPhongShader = new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
 	blinnPhongShader->use();
 
-	//Shader lightIconShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl");
-	//Shader blinnPhongShader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
-	//blinnPhongShader.use();
 
 	vector<PointLight*> lights;
 	vector<Object*> objects;
+
+	PostProcessing postProc(w_width, w_height, backGroundColor, postProcessingToggle, objects);
 
 	Model* cube = new Model("E:/projects/EpicEngine/models/cube/test.fbx", objectNum, objects);
 	cube->position.x = -2.0;
@@ -72,9 +76,7 @@ int main()
 	PointLight thePoint(pointLightNum, lights, objectNum);
 	SpotLight theSpot(spotLightNum, lights, objectNum);
 
-	//MarchingCubes theCubes(1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-1.0), glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
-	MarchingCubes* theCubes = new MarchingCubes(1.0f, 1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-2.0), glm::vec3(2.0f, -2.0f, -2.0f), glm::vec3(2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, 2.0f));
-
+	//MarchingCubes* theCubes = new MarchingCubes(1.0f, 1.0f, 10.0f, blinnPhongShader, objectNum, objects, glm::vec3(-2.0), glm::vec3(2.0f, -2.0f, -2.0f), glm::vec3(2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, -2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, -2.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(-2.0f, 2.0f, 2.0f));
 
 
 	glm::mat4 projection = glm::perspective(camera.Zoom, (float)w_width / (float)w_height, 0.1f, 100.0f);
@@ -95,6 +97,7 @@ int main()
 	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projection));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+
 	//Set callbacks
 	glfwSetKeyCallback(window, keyboardCallback);
 	glfwSetCursorPosCallback(window, mousePosCallback);
@@ -105,18 +108,27 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	glEnable(GL_DEPTH_TEST);
 
 	while (!glfwWindowShouldClose(window))
 	{
+		glEnable(GL_DEPTH_TEST);
+
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		glClearColor(0.1f, 0.5f, 1.0f, 1.0f);
+		glClearColor(backGroundColor.r, backGroundColor.g, backGroundColor.b, backGroundColor.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ImguiHandler::newFrameImgui();
+
+		if (postProcessingToggle) {
+			glfwGetFramebufferSize(window, &w_width, &w_height);
+			postProc.setNewWindowSize(w_width, w_height);
+			screenShader->use();
+			postProc.bindFrameBuffer();
+		}
+
 
 		blinnPhongShader->use();
 		blinnPhongShader->set3fv("viewPosition", camera.Position);
@@ -127,17 +139,24 @@ int main()
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view));
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+
+
 		sun.sendToShader(blinnPhongShader);
 		theSpot.Draw(blinnPhongShader, lightIconShader);
 
 		thePoint.Draw(blinnPhongShader, lightIconShader);
 
-		theCubes->ConstructMesh();
+		//theCubes->ConstructMesh();
 
 		monkey->Draw(blinnPhongShader, false, GL_TRIANGLES);
 
 		cube->Draw(blinnPhongShader, false, GL_TRIANGLES);
 		plane->Draw(blinnPhongShader, false, GL_TRIANGLES);
+
+
+		if (postProcessingToggle) {
+			postProc.drawScreen(screenShader);
+		}
 
 		inpHandler.execute_key_action(deltaTime, window, lights, pointLightNum + spotLightNum, sun, objects);
 
@@ -155,7 +174,9 @@ int main()
 	delete monkey;
 	delete cube;
 	delete plane;
-	delete theCubes;
+	//delete theCubes;
+	delete screenShader;
+
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
