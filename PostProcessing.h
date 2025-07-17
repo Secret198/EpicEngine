@@ -26,6 +26,7 @@ private:
 	uint32_t VAO;
 
 	bool& postProcessToggle;
+	bool& skyToggle;
 
 	const float quadVertices[30]{ // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
 		// positions   // texCoords
@@ -86,7 +87,6 @@ private:
 	}
 
 	void resize() {
-		std::cout << scrWidth << std::endl;
 		//glBindTexture(GL_TEXTURE_2D, colorBuffer);
 		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, scrWidth, scrHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -98,11 +98,12 @@ private:
 	}
 
 public:
-	PostProcessing(int screenWidth, int screenHeight, glm::vec4 backgroundColor, bool &postProcToggle, std::vector<Object*>& objects):
+	PostProcessing(int screenWidth, int screenHeight, glm::vec4 backgroundColor, bool &postProcToggle, bool &skyboxToggle, std::vector<Object*>& objects):
 		scrWidth(screenWidth),
 		scrHeight(screenHeight),
 		backColor(backgroundColor),
-		postProcessToggle(postProcToggle)
+		postProcessToggle(postProcToggle),
+		skyToggle(skyboxToggle)
 	{
 		setupFrameBuffer();
 		setupMesh();
@@ -135,6 +136,7 @@ public:
 
 	void ImGuiSection() {
 		ImGui::Checkbox("Post processing", &postProcessToggle);
+		ImGui::Checkbox("Sky box", &skyToggle);
 	}
 
 	void setNewWindowSize(int width, int height) {

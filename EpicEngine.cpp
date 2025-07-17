@@ -16,6 +16,17 @@ uint16_t spotLightNum = 0u;
 uint32_t objectNum = 0u;
 
 bool postProcessingToggle = false;
+bool skyboxToggle = false;
+
+const vector<std::string> cubeMapFaces
+{
+	"textures/skybox/right.jpg",
+	"textures/skybox/left.jpg",
+	"textures/skybox/top.jpg",
+	"textures/skybox/bottom.jpg",
+	"textures/skybox/front.jpg",
+	"textures/skybox/back.jpg"
+};
 
 int main()
 {
@@ -47,9 +58,7 @@ int main()
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
-	//shared_ptr<Shader> lightIconShader(new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl"));
-	//shared_ptr<Shader> blinnPhongShader(new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl"));
-
+	Shader* skyboxShader = new Shader("shaders/skyboxVert.glsl", "shaders/skyboxFrag.glsl");
 	Shader* screenShader = new Shader("shaders/postProcessingVert.glsl", "shaders/postProcessingFrag.glsl");
 	Shader* lightIconShader = new Shader("shaders/blinnPhongVert.glsl", "shaders/showLight.glsl");
 	Shader* blinnPhongShader = new Shader("shaders/blinnPhongVert.glsl", "shaders/blinnPhongFrag.glsl");
@@ -59,7 +68,10 @@ int main()
 	vector<PointLight*> lights;
 	vector<Object*> objects;
 
-	PostProcessing postProc(w_width, w_height, backGroundColor, postProcessingToggle, objects);
+	PostProcessing postProc(w_width, w_height, backGroundColor, postProcessingToggle, skyboxToggle, objects);
+
+	Model* skyBox = new Model("models/cube/cube.obj", objectNum);
+	skyBox->loadCubeMap(cubeMapFaces);
 
 	Model* cube = new Model("models/cube/test.fbx", objectNum, objects);
 	cube->position.x = -2.0;
@@ -140,7 +152,6 @@ int main()
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 
-
 		sun.sendToShader(blinnPhongShader);
 		theSpot.Draw(blinnPhongShader, lightIconShader);
 
@@ -153,6 +164,12 @@ int main()
 		cube->Draw(blinnPhongShader, false, GL_TRIANGLES);
 		plane->Draw(blinnPhongShader, false, GL_TRIANGLES);
 
+		if (skyboxToggle) {
+			glDepthFunc(GL_LEQUAL);
+			skyboxShader->use();
+			skyBox->Draw(skyboxShader, true, GL_TRIANGLES);
+			glDepthFunc(GL_LESS);
+		}
 
 		if (postProcessingToggle) {
 			postProc.drawScreen(screenShader);
@@ -176,6 +193,7 @@ int main()
 	delete plane;
 	//delete theCubes;
 	delete screenShader;
+	delete skyboxShader;
 
 
 	glfwDestroyWindow(window);
