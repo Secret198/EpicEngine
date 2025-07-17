@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "PointLight.h"
-#include "../shaders/shaderClass.h"
+#include "../shaderClass.h"
 #include <string>
 
 class SpotLight : public PointLight {;

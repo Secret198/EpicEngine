@@ -1,8 +1,8 @@
 #ifndef MARCHING_CUBES_H
 #define MARCHING_CUBES_H
 
-#include "models/mesh.h"
-#include "models/model.h"
+#include "mesh.h"
+#include "model.h"
 #include <cmath>
 #include "Object.h"
 #include <cstdlib>

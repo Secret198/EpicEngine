@@ -6,13 +6,13 @@
 #include "mesh.h"
 #include <stb_image.h>
 #include <string>
-#include "../shaders/shaderClass.h"
-#include "../Lights/Light.h"
+#include "shaderClass.h"
+#include "Lights/Light.h"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <functional>
-#include "../Object.h"
+#include "Object.h"
 
 class Model : Object {
 public:

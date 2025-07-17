@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "Light.h"
-#include "../shaders/shaderClass.h"
+#include "../shaderClass.h"
 #include <string>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -57,7 +57,7 @@ public:
 		constant(1.0),
 		linear(0.7),
 		quadratic(1.8),
-		lightIcon("E:/projects/EpicEngine/models/LightCube/LightCube.obj", objectNum),
+		lightIcon("models/LightCube/LightCube.obj", objectNum),
 		id(lightNum),
 		lightNum(++lightNum)
 	{
@@ -70,7 +70,7 @@ public:
 		constant(constant),
 		linear(linear),
 		quadratic(quadratic),
-		lightIcon("E:/projects/EpicEngine/models/LightCube/LightCube.obj", objectNum),
+		lightIcon("models/LightCube/LightCube.obj", objectNum),
 		id(lightNum),
 		lightNum(++lightNum)
 	{

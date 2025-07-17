@@ -50,9 +50,9 @@ int main()
 	//shared_ptr<Shader> lightIconShader(new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl"));
 	//shared_ptr<Shader> blinnPhongShader(new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl"));
 
-	Shader* screenShader = new Shader("E:/projects/EpicEngine/shaders/postProcessingVert.glsl", "E:/projects/EpicEngine/shaders/postProcessingFrag.glsl");
-	Shader* lightIconShader = new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/showLight.glsl");
-	Shader* blinnPhongShader = new Shader("E:/projects/EpicEngine/shaders/blinnPhongVert.glsl", "E:/projects/EpicEngine/shaders/blinnPhongFrag.glsl");
+	Shader* screenShader = new Shader("shaders/postProcessingVert.glsl", "shaders/postProcessingFrag.glsl");
+	Shader* lightIconShader = new Shader("shaders/blinnPhongVert.glsl", "shaders/showLight.glsl");
+	Shader* blinnPhongShader = new Shader("shaders/blinnPhongVert.glsl", "shaders/blinnPhongFrag.glsl");
 	blinnPhongShader->use();
 
 
@@ -61,14 +61,14 @@ int main()
 
 	PostProcessing postProc(w_width, w_height, backGroundColor, postProcessingToggle, objects);
 
-	Model* cube = new Model("E:/projects/EpicEngine/models/cube/test.fbx", objectNum, objects);
+	Model* cube = new Model("models/cube/test.fbx", objectNum, objects);
 	cube->position.x = -2.0;
 
-	Model* plane = new Model("E:/projects/EpicEngine/models/plane/plane.obj", objectNum, objects);
+	Model* plane = new Model("models/plane/plane.obj", objectNum, objects);
 	plane->scale = glm::vec3(5.0);
 	plane->position.y = -1.0;
 
-	Model* monkey = new Model("E:/projects/EpicEngine/models/monkey/monkey.obj", objectNum, objects);
+	Model* monkey = new Model("models/monkey/monkey.obj", objectNum, objects);
 	monkey->position.x = -5.5;
 	monkey->matDiffuse = glm::vec3(1.0, 0.2, 0.1);
 

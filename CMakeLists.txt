@@ -12,7 +12,7 @@ endif()
 
 project ("EpicEngine")
 # Add source to this project's executable.
-add_executable (EpicEngine "EpicEngine.cpp" "EpicEngine.h" "camera.h" "shaders/shaderClass.h" "models/model.h" "models/mesh.h" "inputHandler.h" "imGuiHandler.h" "Lights/Light.h" "Lights/PointLight.h" "Lights/DirectionalLight.h" "Lights/SpotLight.h" "MarchingCubes.h" "PerlinNoise.h" "Object.h" "PostProcessing.h")
+add_executable (EpicEngine "EpicEngine.cpp" "EpicEngine.h" "camera.h" "shaderClass.h" "model.h" "mesh.h" "inputHandler.h" "imGuiHandler.h" "Lights/Light.h" "Lights/PointLight.h" "Lights/DirectionalLight.h" "Lights/SpotLight.h" "MarchingCubes.h" "PerlinNoise.h" "Object.h" "PostProcessing.h")
 
 
 add_subdirectory(dependencies/stb_image)
@@ -32,6 +32,21 @@ add_custom_command(TARGET EpicEngine POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/assimp/assimp-vc143-mtd.dll"
     $<TARGET_FILE_DIR:EpicEngine>)
+
+add_custom_command(TARGET EpicEngine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/models"
+    $<TARGET_FILE_DIR:EpicEngine>/models)
+
+add_custom_command(TARGET EpicEngine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/textures"
+    $<TARGET_FILE_DIR:EpicEngine>/textures)
+
+add_custom_command(TARGET EpicEngine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders"
+    $<TARGET_FILE_DIR:EpicEngine>/shaders)
 
 
 target_link_libraries(EpicEngine PUBLIC glad)

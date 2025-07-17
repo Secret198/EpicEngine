@@ -7,8 +7,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "camera.h"
-#include "models/model.h"
-#include "shaders/shaderClass.h"
+#include "model.h"
+#include "shaderClass.h"
 #include "inputHandler.h"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

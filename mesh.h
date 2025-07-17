@@ -8,7 +8,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "../shaders/shaderClass.h"
+#include "shaderClass.h"
 
 struct Vertex {
 	glm::vec3 Position;

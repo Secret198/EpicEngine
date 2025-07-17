@@ -3,7 +3,7 @@
 
 #include "Light.h"
 #include <glm/glm.hpp>
-#include "../shaders/shaderClass.h"
+#include "../shaderClass.h"
 
 class DirectionalLight : public Light {
 public:

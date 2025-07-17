@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <glm/glm.hpp>
-#include "shaders/shaderClass.h"
+#include "shaderClass.h"
 #include "Object.h"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
