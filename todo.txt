@@ -3,5 +3,4 @@
 
 Features:
 	- Improve imgui ui
-	- Post processing effects
 

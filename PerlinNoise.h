@@ -24,7 +24,9 @@
 #define V6 glm::dot(randomVectors[getVectorIndex(CORNER6)], getCornerToPointVec(CORNER6, point))
 #define V7 glm::dot(randomVectors[getVectorIndex(CORNER7)], getCornerToPointVec(CORNER7, point))
 
-//0, 1 
+
+
+//0, 1				<-- Corners that make up and edge
 //3, 5  
 //2, 4
 //6, 7
@@ -64,46 +66,22 @@ class PerlinNoise {
 
 	};
 
-	void generateRandomVectors() {
-		for (int i = 0; i < pow(size, 3); i++) {
-			randomVectors[i] = possibleVectors[rand() % 26];
-		}
-	}
+	void generateRandomVectors();
 
-	glm::vec3 getCornerToPointVec(glm::ivec3 corner, glm::vec3 point) {
-		return glm::vec3(point.x - (float)corner.x, point.y - (float)corner.y, point.z - (float)corner.z);
-	}
+	glm::vec3 getCornerToPointVec(glm::ivec3 corner, glm::vec3 point);
 
-	int getVectorIndex(glm::ivec3 corner) {
-		return glm::abs(corner.z) * size * size + glm::abs(corner.y) * size + glm::abs(corner.x);
-	}
+	int getVectorIndex(glm::ivec3 corner);
 
-	float lerp(float v1, float v2, float pointCoord) {
-		float intPointCoord = (int)pointCoord;
-		return v1 + (pointCoord - intPointCoord) * (v2 - v1);
-	}
+	float lerp(float v1, float v2, float pointCoord);
 
 public:
-	PerlinNoise() {
-		generateRandomVectors();
-	}
+	PerlinNoise();
 
-	float getValue(glm::vec3 point, float scale) {
-		point *= scale;
-		glm::ivec3 corner;
-		corner.x = (int)point.x;
-		corner.y = (int)point.y;
-		corner.z = (int)point.z;
-
-		return lerp(lerp(lerp(V0, V1, point.x), lerp(V3, V5, point.x), point.z), lerp(lerp(V2, V4, point.x), lerp(V6, V7, point.x), point.z), point.y);
-	}
+	float getValue(glm::vec3 point, float scale);
 
 
 
-	~PerlinNoise() {
-		delete randomVectors;
-		delete possibleVectors;
-	}
+	~PerlinNoise();
 };
 
 #endif // !PERLIN_NOISE_H

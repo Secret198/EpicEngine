@@ -12,7 +12,7 @@ endif()
 
 project ("EpicEngine")
 # Add source to this project's executable.
-add_executable (EpicEngine "EpicEngine.cpp" "EpicEngine.h" "camera.h" "shaderClass.h" "model.h" "mesh.h" "inputHandler.h" "imGuiHandler.h" "Lights/Light.h" "Lights/PointLight.h" "Lights/DirectionalLight.h" "Lights/SpotLight.h" "MarchingCubes.h" "PerlinNoise.h" "Object.h" "PostProcessing.h")
+add_executable (EpicEngine "EpicEngine.cpp" "EpicEngine.h" "camera.h" "shaderClass.h" "model.h" "mesh.h" "inputHandler.h" "imGuiHandler.h" "Lights/Light.h" "Lights/PointLight.h" "Lights/DirectionalLight.h" "Lights/SpotLight.h" "MarchingCubes.h" "PerlinNoise.h" "Object.h" "PostProcessing.h" "Lights/PointLight.cpp" "Lights/DirectionalLight.cpp" "Lights/SpotLight.cpp" "imGuiHandler.cpp" "inputHandler.cpp" "camera.cpp" "MarchingCubes.cpp" "mesh.cpp" "model.cpp" "PerlinNoise.cpp" "PostProcessing.cpp" )
 
 
 add_subdirectory(dependencies/stb_image)
@@ -43,10 +43,15 @@ add_custom_command(TARGET EpicEngine POST_BUILD
     "${CMAKE_CURRENT_SOURCE_DIR}/textures"
     $<TARGET_FILE_DIR:EpicEngine>/textures)
 
-add_custom_command(TARGET EpicEngine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
-    "${CMAKE_CURRENT_SOURCE_DIR}/shaders"
-    $<TARGET_FILE_DIR:EpicEngine>/shaders)
+file(GLOB SHADERS "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*")
+
+foreach(SHADER ${SHADERS})
+    add_custom_command(TARGET EpicEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${SHADER}"
+        $<TARGET_FILE_DIR:EpicEngine>/shaders)
+endforeach()
+
 
 
 target_link_libraries(EpicEngine PUBLIC glad)
