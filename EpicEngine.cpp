@@ -30,6 +30,11 @@ const vector<std::string> cubeMapFaces
 
 int main()
 {
+//#ifdef RELEASE_BUILD
+//	HWND consoleWindow = GetConsoleWindow();
+//	ShowWindow(consoleWindow, SW_HIDE);
+//#endif // RELEASE_BUILD
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);

@@ -43,13 +43,19 @@ add_custom_command(TARGET EpicEngine POST_BUILD
     "${CMAKE_CURRENT_SOURCE_DIR}/textures"
     $<TARGET_FILE_DIR:EpicEngine>/textures)
 
+add_custom_command(TARGET EpicEngine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders"
+    $<TARGET_FILE_DIR:EpicEngine>/shaders)
+
 file(GLOB SHADERS "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*")
 
 foreach(SHADER ${SHADERS})
-    add_custom_command(TARGET EpicEngine POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${SHADER}"
-        $<TARGET_FILE_DIR:EpicEngine>/shaders)
+    configure_file("${SHADER}" ${CMAKE_BINARY_DIR}/shaders COPYONLY)
+
+#    add_custom_command(TARGET EpicEngine POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy "${SHADER}"
+#        $<TARGET_FILE_DIR:EpicEngine>/shaders)
 endforeach()
 
 
@@ -60,6 +66,10 @@ target_link_libraries(EpicEngine PUBLIC stb_image)
 target_link_libraries(EpicEngine PUBLIC glm)
 
 
+target_compile_definitions(EpicEngine
+  PRIVATE
+    $<$<CONFIG:Release>:RELEASE_BUILD>
+)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET EpicEngine PROPERTY CXX_STANDARD 20)
