@@ -15,7 +15,7 @@ uint16_t pointLightNum = 0u;
 uint16_t spotLightNum = 0u;
 uint32_t objectNum = 0u;
 
-bool postProcessingToggle = false;
+bool postProcessingToggle = true;
 bool skyboxToggle = false;
 
 const vector<std::string> cubeMapFaces
@@ -39,6 +39,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	GLFWwindow* window = glfwCreateWindow(w_width, w_height, "EpicEngine", NULL, NULL);
 
@@ -125,6 +126,8 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
+	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_FRAMEBUFFER_SRGB);
 
 	while (!glfwWindowShouldClose(window))
 	{
